@@ -8,12 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Simple Portal
-  m_Shader: {fileID: 4800000, guid: 9403995fb5271cb42a2783f7296ad414, type: 3}
+  m_Shader: {fileID: 4800000, guid: 425edc6a944382b4390451ccadb94252, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _UVCOLOR_BOTH
-  - _UVDISPLAYTYPE_UVS
+  - _UVCOLOR_DISTANCE
+  - _UVDISPLAYTYPE_TEXTURE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -80,8 +80,9 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _UVColor: 0
-    - _UVDisplayType: 1
+    - _SuckSpeed: 0.5
+    - _UVColor: 1
+    - _UVDisplayType: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
