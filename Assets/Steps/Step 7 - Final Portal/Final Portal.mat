@@ -27,6 +27,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _CutoffNoiseTexture:
+        m_Texture: {fileID: 2800000, guid: d2f5345f02eb33a4b853d93915c65ce8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -52,7 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskNoiseTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: d2f5345f02eb33a4b853d93915c65ce8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -75,22 +79,30 @@ Material:
         m_Texture: {fileID: 2800000, guid: e69f115aff12a8147829737546cd8355, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SkyTexture:
+        m_Texture: {fileID: 2800000, guid: b9367f0a47c235340ab744a66f9ec120, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
     - _CircleRadius: 1
+    - _CutOffNoiseScale: 0.096
     - _Cutoff: 0.5
+    - _CutoffCircleRadius: 1
+    - _CutoffNoiseColorMultiplier: 0.266
+    - _CutoffNoiseSpeed: 0.1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _LengthScale: 1
-    - _MaskCircleRadius: 1
-    - _MaskNoiseColorMultiplier: 0.1
-    - _MaskNoiseScale: 1
-    - _MaskNoiseSpeed: 0.25
-    - _MaskPower: 8
+    - _MaskCircleRadius: 0.97
+    - _MaskNoiseColorMultiplier: 0.266
+    - _MaskNoiseScale: 0.096
+    - _MaskNoiseSpeed: 0.1
+    - _MaskPower: 1.66
     - _Metallic: 0
     - _Mode: 0
     - _NoiseColorMultiplier: 0.1
@@ -101,6 +113,7 @@ Material:
     - _Parallax: 0.02
     - _PortalPower: 11.55
     - _RadialScale: 1
+    - _SkyTextureNoiseScale: 1.85
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -110,7 +123,9 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Center: {r: 0.5, g: 0.5, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.45709178, g: 0.8443338, b: 1.2584865, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PortalSmoothStep: {r: 1.71, g: 0.4, b: 1, a: 1}
+    - _SkyAnimationSpeed: {r: -0.25, g: -0.25, b: 0, a: 0}
+    - _SkySmoothStepEdges: {r: 0.45, g: 0.65, b: 0, a: 0}
   m_BuildTextureStacks: []
