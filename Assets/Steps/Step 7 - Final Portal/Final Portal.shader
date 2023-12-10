@@ -2,6 +2,8 @@ Shader "YoyoMario/Unlit/Final Portal"
 {
     Properties
     {
+        [HDR] _Color("Color", Color) = (1,1,1,1)
+        [Space(20)]
         [Header(Simple Portal Effect)]
         _GradientNoise("Gradient Noise", 2D) = "white" {}
         _NoiseScale("Noise Scale", Float) = 3
@@ -29,6 +31,25 @@ Shader "YoyoMario/Unlit/Final Portal"
         [Space(20)]
         _MaskCircleRadius("Mask Circle Radius", Range(0,1)) = 1
         _MaskPower("Mask Power", Float) = 8
+
+         [Space(50)]
+        [Header(Noise)]
+        _CutoffNoiseTexture("Noise Texture", 2D) = "white" {}
+        _CutOffNoiseScale("Noise Scale", Range(0, 0.5)) = 1
+        _CutoffNoiseSpeed("Noise Speed", Float) = 0.25
+        _CutoffNoiseColorMultiplier("Noise Color Multiplier", Range(0,1)) = 0.1
+        [Space(5)]
+        [Space(20)]
+        _CutoffCircleRadius("Circle Radius", Range(0,1)) = 1
+
+
+        [Space(50)]
+        [Header(Sky)]
+        _SkyTexture ("Sky Texture", 2D) = "white" {}
+        [Space(20)]
+        _SkyTextureNoiseScale ("Noise Scale", float) = 1
+        [ShowAsVector2] _SkySmoothStepEdges("Smooth Step Edge", Vector) = (0.4, 0.6, 0, 0)
+        [ShowAsVector2] _SkyAnimationSpeed("Animation Speed", Vector) = (0.5, 0.5, 0,0)
     }
     SubShader
     {
@@ -37,16 +58,14 @@ Shader "YoyoMario/Unlit/Final Portal"
              "RenderType" = "Opaque" 
              "Queue" = "Transparent"
         }
-        LOD 100
+        
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
-            #pragma multi_compile _UVDISPLAYTYPE_TEXTURE _UVDISPLAYTYPE_UVS
-            #pragma multi_compile _UVCOLOR_BOTH _UVCOLOR_DISTANCE _UVCOLOR_ANGLE
 
             #include "UnityCG.cginc"
 
@@ -89,6 +108,8 @@ Shader "YoyoMario/Unlit/Final Portal"
                 return UV;
             }
 
+            fixed4 _Color;
+
             // Simple portal effect.
             sampler2D _GradientNoise;
             float4 _GradientNoise_ST;
@@ -117,6 +138,24 @@ Shader "YoyoMario/Unlit/Final Portal"
             float _MaskCircleRadius;
             float _MaskPower;
 
+            // Cutoff Circle
+            sampler2D _CutoffNoiseTexture;
+            float4 _CutoffNoiseTexture_ST;
+            float _CutOffNoiseScale;
+            float _CutoffNoiseSpeed;
+            float _CutoffNoiseColorMultiplier;
+
+            float _CutoffCircleRadius;
+
+            // Sky 
+            sampler2D _SkyTexture;
+            float4 _SkyTexture_ST;
+
+            float _SkyTextureNoiseScale;
+            float2 _SkySmoothStepEdges;
+            float2 _SkyAnimationSpeed;
+
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -129,16 +168,26 @@ Shader "YoyoMario/Unlit/Final Portal"
             {
                 float2 originalUV = i.uv;
 
+                // Convert REGULAR UV to POLAR UV.
+                float2 polarUV = Unity_PolarCoordinates(originalUV, _Center, _RadialScale, _LengthScale);
+
+                // Sampling noise texture.
+                float2 noiseUV = originalUV * _MaskNoiseScale;
+                noiseUV += _Time.y * _MaskNoiseSpeed;
+                fixed4 maskNoiseColor = tex2D(_MaskNoiseTexture, noiseUV);
+                maskNoiseColor *= _MaskNoiseColorMultiplier;                
+                float distanceWithNoise = polarUV.r + maskNoiseColor;
+                distanceWithNoise = step(distanceWithNoise, _MaskCircleRadius);
+                distanceWithNoise = 1 - distanceWithNoise; // Invert to black.                
+                fixed4 mask = fixed4(distanceWithNoise, distanceWithNoise, distanceWithNoise, 1);
+                mask += pow(polarUV.r, _MaskPower);
+
                 // Sample noise on REGULAR UV.
                 float2 noiseTextureUV = originalUV * _NoiseScale;
                 noiseTextureUV = Unity_Rotate_Radians(noiseTextureUV, _Center, _Time.y * _NoiseSpeed);
                 fixed4 noiseColor = tex2D(_GradientNoise, noiseTextureUV);
                 fixed4 remappedNoiseColor = Unity_Remap(noiseColor, float2(0, 1), float2(-1, 1));
                 remappedNoiseColor *= _NoisePresence;
-                // return remappedNoiseColor;
-
-                // Convert REGULAR UV to POLAR UV.
-                float2 polarUV = Unity_PolarCoordinates(originalUV, _Center, _RadialScale, _LengthScale);
 
                 // Simple portal.
                 // Create "Suck" effect towards the middle.
@@ -154,7 +203,33 @@ Shader "YoyoMario/Unlit/Final Portal"
                 fixed4 col = tex2D(_PortalTexture, offsetPortalUV);
                 fixed4 steppedCol = smoothstep(_PortalSmoothStep.x, _PortalSmoothStep.y, col);
                 steppedCol = pow(steppedCol, _PortalPower);
-                return steppedCol;
+
+
+                // Sampling noise texture.
+                float2 cutoffNoiseUV = originalUV * _CutOffNoiseScale;
+                cutoffNoiseUV += _Time.y * _CutoffNoiseSpeed;
+                fixed4 cutoffNoiseColor = tex2D(_CutoffNoiseTexture, cutoffNoiseUV);
+                cutoffNoiseColor *= _CutoffNoiseColorMultiplier;
+
+                float cutoffDistanceWithNoise = polarUV.r + cutoffNoiseColor;
+                cutoffDistanceWithNoise = step(cutoffDistanceWithNoise, _CutoffCircleRadius);
+                // return cutoffDistanceWithNoise;
+
+
+                // Sample sky 
+                float2 skyUV = originalUV;
+                skyUV += _Time.y * _SkyAnimationSpeed;
+                skyUV *= _SkyTextureNoiseScale;
+                fixed4 skyTextureColor = tex2D(_SkyTexture, skyUV);
+                fixed4 skySteppedCol = smoothstep(_SkySmoothStepEdges.x, _SkySmoothStepEdges.y, skyTextureColor);
+                skySteppedCol = 1 - skySteppedCol;// invert to black.
+                // return skySteppedCol;
+
+                fixed4 finalCol = steppedCol + mask;
+                finalCol *= _Color;
+                finalCol *= cutoffDistanceWithNoise;
+                finalCol += skySteppedCol;
+                return finalCol;
             }
             ENDCG
         }
