@@ -58,7 +58,6 @@ Shader"YoyoMario/Unlit/CircleMask"
             float _NoiseColorMultiplier;
 
             float _CircleRadius;
-
             float _MaskPower;
 
             float2 Unity_PolarCoordinates(float2 cartesianUV, float2 Center, float RadialScale, float LengthScale)
