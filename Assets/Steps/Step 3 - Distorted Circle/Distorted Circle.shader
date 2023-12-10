@@ -7,13 +7,13 @@ Shader"YoyoMario/Unlit/DistortedCircle"
         _LengthScale("Length Scale", Range(0,2)) = 1
         [Space(20)]
         [Header(Noise)]
-        _NoiseTexture("Noise Texture", 2D) = "white" {}
-        _NoiseScale("Noise Scale", Range(0, 0.5)) = 1
-        _NoiseSpeed("Noise Speed", Float) = 0.25
-        _NoiseColorMultiplier("Noise Color Multiplier", Range(0,1)) = 0.1
+        _CutoffNoiseTexture("Noise Texture", 2D) = "white" {}
+        _CutOffNoiseScale("Noise Scale", Range(0, 0.5)) = 1
+        _CutoffNoiseSpeed("Noise Speed", Float) = 0.25
+        _CutoffNoiseColorMultiplier("Noise Color Multiplier", Range(0,1)) = 0.1
         [Space(5)]
         [Space(20)]
-        _CircleRadius("Circle Radius", Range(0,1)) = 1
+        _CutoffCircleRadius("Circle Radius", Range(0,1)) = 1
     }
     SubShader
     {
@@ -49,13 +49,13 @@ Shader"YoyoMario/Unlit/DistortedCircle"
             float _RadialScale;
             float _LengthScale;
 
-            sampler2D _NoiseTexture;
-            float4 _NoiseTexture_ST;
-            float _NoiseScale;
-            float _NoiseSpeed;
-            float _NoiseColorMultiplier;
+            sampler2D _CutoffNoiseTexture;
+            float4 _CutoffNoiseTexture_ST;
+            float _CutOffNoiseScale;
+            float _CutoffNoiseSpeed;
+            float _CutoffNoiseColorMultiplier;
 
-            float _CircleRadius;
+            float _CutoffCircleRadius;
 
             float2 Unity_PolarCoordinates(float2 cartesianUV, float2 Center, float RadialScale, float LengthScale)
             {
@@ -79,15 +79,15 @@ Shader"YoyoMario/Unlit/DistortedCircle"
                 float2 polarUV = Unity_PolarCoordinates(originalUV, _Center, _RadialScale, _LengthScale);
 
                 // Sampling noise texture.
-                float2 noiseUV = originalUV * _NoiseScale;
-                noiseUV += _Time.y * _NoiseSpeed;
-                fixed4 noiseColor = tex2D(_NoiseTexture, noiseUV);
-                noiseColor *= _NoiseColorMultiplier;
+                float2 cutoffNoiseUV = originalUV * _CutOffNoiseScale;
+                cutoffNoiseUV += _Time.y * _CutoffNoiseSpeed;
+                fixed4 cutoffNoiseColor = tex2D(_CutoffNoiseTexture, cutoffNoiseUV);
+                cutoffNoiseColor *= _CutoffNoiseColorMultiplier;
 
-                float distanceWithNoise = polarUV.r + noiseColor;
-                distanceWithNoise = step(distanceWithNoise, _CircleRadius);
+                float cutoffDistanceWithNoise = polarUV.r + cutoffNoiseColor;
+                cutoffDistanceWithNoise = step(cutoffDistanceWithNoise, _CutoffCircleRadius);
 
-                return distanceWithNoise;
+                return cutoffDistanceWithNoise;
             }
             ENDCG
         }

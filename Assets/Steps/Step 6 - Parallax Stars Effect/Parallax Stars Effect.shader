@@ -2,11 +2,11 @@ Shader "YoyoMario/Unlit/ParallaxStarsEffect"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _SkyTexture ("Sky Texture", 2D) = "white" {}
         [Space(20)]
-        _NoiseScale ("Noise Scale", float) = 1
-        [ShowAsVector2] _SmoothStepEdges("Smooth Step Edge", Vector) = (0.4, 0.6, 0, 0)
-        [ShowAsVector2] _AnimationSpeed("Animation Speed", Vector) = (0.5, 0.5, 0,0)
+        _SkyTextureNoiseScale ("Noise Scale", float) = 1
+        [ShowAsVector2] _SkySmoothStepEdges("Smooth Step Edge", Vector) = (0.4, 0.6, 0, 0)
+        [ShowAsVector2] _SkyAnimationSpeed("Animation Speed", Vector) = (0.5, 0.5, 0,0)
     }
     SubShader
     {
@@ -33,31 +33,30 @@ Shader "YoyoMario/Unlit/ParallaxStarsEffect"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            sampler2D _SkyTexture;
+            float4 _SkyTexture_ST;
 
-            float _NoiseScale;
-            float2 _SmoothStepEdges;
-            float2 _AnimationSpeed;
+            float _SkyTextureNoiseScale;
+            float2 _SkySmoothStepEdges;
+            float2 _SkyAnimationSpeed;
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv = TRANSFORM_TEX(v.uv, _SkyTexture);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float2 uv = i.uv;
-                uv += _Time.y * _AnimationSpeed;
-                uv *= _NoiseScale;
-                fixed4 col = tex2D(_MainTex, uv);
-                fixed4 steppedCol = smoothstep(_SmoothStepEdges.x, _SmoothStepEdges.y, col);
-                steppedCol = 1 - steppedCol;// invert to black.
-                // steppedCol = frac(steppedCol);
-                return steppedCol;
+                float2 originalUV = i.uv;
+                originalUV += _Time.y * _SkyAnimationSpeed;
+                originalUV *= _SkyTextureNoiseScale;
+                fixed4 skyTextureColor = tex2D(_SkyTexture, originalUV);
+                fixed4 skySteppedCol = smoothstep(_SkySmoothStepEdges.x, _SkySmoothStepEdges.y, skyTextureColor);
+                skySteppedCol = 1 - skySteppedCol;// invert to black.
+                return skySteppedCol;
             }
             ENDCG
         }

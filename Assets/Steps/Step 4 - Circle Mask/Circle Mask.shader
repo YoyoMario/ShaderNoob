@@ -58,7 +58,6 @@ Shader"YoyoMario/Unlit/CircleMask"
             float _NoiseColorMultiplier;
 
             float _CircleRadius;
-
             float _MaskPower;
 
             float2 Unity_PolarCoordinates(float2 cartesianUV, float2 Center, float RadialScale, float LengthScale)
@@ -86,14 +85,11 @@ Shader"YoyoMario/Unlit/CircleMask"
                 float2 noiseUV = originalUV * _NoiseScale;
                 noiseUV += _Time.y * _NoiseSpeed;
                 fixed4 noiseColor = tex2D(_NoiseTexture, noiseUV);
-                noiseColor *= _NoiseColorMultiplier;
-                
+                noiseColor *= _NoiseColorMultiplier;                
                 float distanceWithNoise = polarUV.r + noiseColor;
                 distanceWithNoise = step(distanceWithNoise, _CircleRadius);
-                distanceWithNoise = 1 - distanceWithNoise; // Invert to black.
-                
+                distanceWithNoise = 1 - distanceWithNoise; // Invert to black.                
                 fixed4 mask = fixed4(distanceWithNoise, distanceWithNoise, distanceWithNoise, 1);
-
                 mask += pow(polarUV.r, _MaskPower);
 
                 return mask;

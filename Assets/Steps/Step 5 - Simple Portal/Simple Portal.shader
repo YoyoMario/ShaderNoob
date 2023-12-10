@@ -4,7 +4,7 @@ Shader"YoyoMario/Unlit/SimplePortal"
     {
         _GradientNoise("Gradient Noise", 2D) = "white" {}
         _NoiseScale("Noise Scale", Float) = 3
-        _NoisePresence("Noise Presence", Range(0, 1)) = 1
+        _NoisePresence("Noise Presence", Range(0, 0.2)) = .2
         _NoiseSpeed("Noise Speed", Range(-0.5,0.5)) = 0.1
         [Space(20)]
         _PortalTexture("Portal Texture", 2D) = "white"{}   
@@ -59,6 +59,20 @@ Shader"YoyoMario/Unlit/SimplePortal"
                 return OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
             }
 
+            float2 Unity_Rotate_Radians(float2 UV, float2 Center, float Rotation)
+            {
+                UV -= Center;
+                float s = sin(Rotation);
+                float c = cos(Rotation);
+                float2x2 rMatrix = float2x2(c, -s, s, c);
+                rMatrix *= 0.5;
+                rMatrix += 0.5;
+                rMatrix = rMatrix * 2 - 1;
+                UV.xy = mul(UV.xy, rMatrix);
+                UV += Center;
+                return UV;
+            }
+
             sampler2D _GradientNoise;
             float4 _GradientNoise_ST;
             float _NoiseScale;
@@ -89,8 +103,9 @@ Shader"YoyoMario/Unlit/SimplePortal"
                 float2 originalUV = i.uv;
 
                 // Sample noise on REGULAR UV.
-                float2 noiseColorUV = (i.uv * _NoiseScale) + (_Time.y * _NoiseSpeed);
-                fixed4 noiseColor = tex2D(_GradientNoise, noiseColorUV);
+                float2 noiseTextureUV = originalUV * _NoiseScale;
+                noiseTextureUV = Unity_Rotate_Radians(noiseTextureUV, _Center, _Time.y * _NoiseSpeed);
+                fixed4 noiseColor = tex2D(_GradientNoise, noiseTextureUV);
                 fixed4 remappedNoiseColor = Unity_Remap(noiseColor, float2(0, 1), float2(-1, 1));
                 remappedNoiseColor *= _NoisePresence;
                 // return remappedNoiseColor;

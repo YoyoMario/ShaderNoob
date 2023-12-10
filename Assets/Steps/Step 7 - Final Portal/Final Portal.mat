@@ -7,13 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Simple Portal
-  m_Shader: {fileID: 4800000, guid: 425edc6a944382b4390451ccadb94252, type: 3}
+  m_Name: Final Portal
+  m_Shader: {fileID: 4800000, guid: 10d1d3d1aa0df53498cb83b5789daeb9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _UVCOLOR_DISTANCE
-  - _UVDISPLAYTYPE_TEXTURE
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -27,6 +25,10 @@ Material:
     m_TexEnvs:
     - _BumpMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CutoffNoiseTexture:
+        m_Texture: {fileID: 2800000, guid: d2f5345f02eb33a4b853d93915c65ce8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -50,10 +52,18 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: afd65cd34d3d9ef408ebb966b231b3b1, type: 3}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskNoiseTexture:
+        m_Texture: {fileID: 2800000, guid: d2f5345f02eb33a4b853d93915c65ce8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -69,20 +79,33 @@ Material:
         m_Texture: {fileID: 2800000, guid: e69f115aff12a8147829737546cd8355, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SkyTexture:
+        m_Texture: {fileID: 2800000, guid: b9367f0a47c235340ab744a66f9ec120, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
+    - _CircleRadius: 1
+    - _CutOffNoiseScale: 0.096
     - _Cutoff: 0.5
+    - _CutoffCircleRadius: 1
+    - _CutoffNoiseColorMultiplier: 0.266
+    - _CutoffNoiseSpeed: 0.1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LegnthScale: 1
     - _LengthScale: 1
+    - _MaskCircleRadius: 0.97
+    - _MaskNoiseColorMultiplier: 0.266
+    - _MaskNoiseScale: 0.096
+    - _MaskNoiseSpeed: 0.1
+    - _MaskPower: 1.66
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseAttention: 0.5
+    - _NoiseColorMultiplier: 0.1
     - _NoisePresence: 0.104
     - _NoiseScale: 1
     - _NoiseSpeed: 0.282
@@ -90,20 +113,19 @@ Material:
     - _Parallax: 0.02
     - _PortalPower: 11.55
     - _RadialScale: 1
-    - _ScrollSpeed: -0.17
+    - _SkyTextureNoiseScale: 1.85
     - _SmoothnessTextureChannel: 0
-    - _SomeStuff: 1.58
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SuckSpeed: 0.2
-    - _UVColor: 1
-    - _UVDisplayType: 0
+    - _TEst: 0.1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Center: {r: 0.5, g: 0.5, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.45709178, g: 0.8443338, b: 1.2584865, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PortalSmoothStep: {r: 1.71, g: 0.4, b: 1, a: 1}
-    - _SmoothStep: {r: 1.39, g: 0.41, b: 1, a: 1}
+    - _SkyAnimationSpeed: {r: -0.25, g: -0.25, b: 0, a: 0}
+    - _SkySmoothStepEdges: {r: 0.45, g: 0.65, b: 0, a: 0}
   m_BuildTextureStacks: []

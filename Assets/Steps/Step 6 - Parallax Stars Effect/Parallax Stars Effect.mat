@@ -59,6 +59,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SkyTexture:
+        m_Texture: {fileID: 2800000, guid: b9367f0a47c235340ab744a66f9ec120, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
@@ -73,6 +77,7 @@ Material:
     - _NoiseScale: 1.85
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _SkyTextureNoiseScale: 1.85
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -82,5 +87,7 @@ Material:
     - _AnimationSpeed: {r: -0.25, g: -0.25, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SkyAnimationSpeed: {r: -0.25, g: -0.25, b: 0, a: 0}
+    - _SkySmoothStepEdges: {r: 0.45, g: 0.65, b: 0, a: 0}
     - _SmoothStepEdges: {r: 0.45, g: 0.65, b: 0, a: 0}
   m_BuildTextureStacks: []
