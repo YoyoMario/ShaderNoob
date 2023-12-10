@@ -2,18 +2,22 @@ Shader"YoyoMario/Unlit/SimplePortal"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _GradientNoise("Gradient Noise", 2D) = "white" {}
+        _NoiseScale("Noise Scale", Float) = 3
+        _NoisePresence("Noise Presence", Range(0, 1)) = 1
+        _NoiseSpeed("Noise Speed", Range(-0.5,0.5)) = 0.1
         [Space(20)]
+        _PortalTexture("Portal Texture", 2D) = "white"{}   
+        _PortalSmoothStep("Portal Smooth Step", Vector) = (1,1,1,1)     
+        _PortalPower("Portal Power", float) = 5
+        [Space(20)]
+        [Header(Polar Coordinates)]
+        [Space(5)]
         [ShowAsVector2] _Center("Center", Vector) = (0.5, 0.5, 0, 0)
-        _RadialScale("Radial Scale", Range(0.5,2.5)) = 1
-        _LengthScale("Length Scale", Range(0,2)) = 1
+        _RadialScale("Radial Scale", Range(-2.5,2.5)) = 1
+        _LengthScale("Length Scale", Range(-2,2)) = 1
         [Space(20)]
-        [KeywordEnum(Texture, UVs)]
-        _UVDisplayType ("UV Display Type", Float) = 0
-        [KeywordEnum(Both, Distance, Angle)]
-        _UVColor("UV Color", Float) = 0
-        [Space(20)]
-        _SuckSpeed("Suck Speed", Range(0,0.5)) = 0.1
+        _SuckSpeed("Suck Speed", Range(-0.5,0.5)) = 0.1
     }
     SubShader
     {
@@ -50,8 +54,21 @@ Shader"YoyoMario/Unlit/SimplePortal"
                 return float2(radius, angle);
             }
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            float4 Unity_Remap(float4 In, float2 InMinMax, float2 OutMinMax)
+            {
+                return OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
+            }
+
+            sampler2D _GradientNoise;
+            float4 _GradientNoise_ST;
+            float _NoiseScale;
+            float _NoisePresence;
+            float _NoiseSpeed;
+
+            sampler2D _PortalTexture;
+            float4 _PortalTexture_ST;
+            float2 _PortalSmoothStep;
+            float _PortalPower;
 
             float2 _Center;
             float _RadialScale;
@@ -63,31 +80,37 @@ Shader"YoyoMario/Unlit/SimplePortal"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv = TRANSFORM_TEX(v.uv, _GradientNoise);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 originalUV = i.uv;
-                float2 polarUV = Unity_PolarCoordinates(originalUV, _Center, _RadialScale, _LengthScale);
-                
-                polarUV.x += _Time.y * _SuckSpeed;
 
-                fixed4 col;
-            #if _UVDISPLAYTYPE_TEXTURE
-                col = tex2D(_MainTex, polarUV);
-            #elif _UVDISPLAYTYPE_UVS
-                col = fixed4(frac(polarUV.x), polarUV.y, 0,1);
-            #if _UVCOLOR_BOTH                
-                col = col;
-            #elif _UVCOLOR_DISTANCE
-                col.g = 0;
-            #elif _UVCOLOR_ANGLE
-                col.r = 0;
-            #endif
-            #endif                
-                return col;
+                // Sample noise on REGULAR UV.
+                float2 noiseColorUV = (i.uv * _NoiseScale) + (_Time.y * _NoiseSpeed);
+                fixed4 noiseColor = tex2D(_GradientNoise, noiseColorUV);
+                fixed4 remappedNoiseColor = Unity_Remap(noiseColor, float2(0, 1), float2(-1, 1));
+                remappedNoiseColor *= _NoisePresence;
+                // return remappedNoiseColor;
+
+                // Convert REGULAR UV to POLAR UV.
+                float2 polarUV = Unity_PolarCoordinates(originalUV, _Center, _RadialScale, _LengthScale);
+                // Create "Suck" effect towards the middle.
+                float polarX = polarUV.x + (_Time.y * _SuckSpeed);
+                // Create spin effect = distance + angle;
+                float polarY = polarUV.x + polarUV.y;
+                polarUV = float2(polarX, polarY);
+
+                // Offset Polar Coords By REGULAR UV based Noise.
+                float2 offsetPolarUV = polarUV + remappedNoiseColor;
+
+                // Sample the texture based on POLAR UV.
+                fixed4 col = tex2D(_PortalTexture, offsetPolarUV);
+                fixed4 steppedCol = smoothstep(_PortalSmoothStep.x, _PortalSmoothStep.y, col);
+                steppedCol = pow(steppedCol, _PortalPower);
+                return steppedCol;
             }
             ENDCG
         }

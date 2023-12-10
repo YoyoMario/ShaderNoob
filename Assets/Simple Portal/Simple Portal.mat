@@ -45,8 +45,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _GradientNoise:
+        m_Texture: {fileID: 2800000, guid: 336afacdd1e5f4d40bcf51bc25c50afc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ed810191a392a0d4c902afd1c7a23363, type: 3}
+        m_Texture: {fileID: 2800000, guid: afd65cd34d3d9ef408ebb966b231b3b1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -59,6 +63,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PortalTexture:
+        m_Texture: {fileID: 2800000, guid: e69f115aff12a8147829737546cd8355, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -74,13 +82,20 @@ Material:
     - _LengthScale: 1
     - _Metallic: 0
     - _Mode: 0
+    - _NoiseAttention: 0.5
+    - _NoisePresence: 0.17
+    - _NoiseScale: 0.16
+    - _NoiseSpeed: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _PortalPower: 11.55
     - _RadialScale: 1
+    - _ScrollSpeed: -0.17
     - _SmoothnessTextureChannel: 0
+    - _SomeStuff: 1.58
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _SuckSpeed: 0.5
+    - _SuckSpeed: 0.2
     - _UVColor: 1
     - _UVDisplayType: 0
     - _UVSec: 0
@@ -89,4 +104,6 @@ Material:
     - _Center: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _PortalSmoothStep: {r: 1.71, g: 0.4, b: 1, a: 1}
+    - _SmoothStep: {r: 1.39, g: 0.41, b: 1, a: 1}
   m_BuildTextureStacks: []

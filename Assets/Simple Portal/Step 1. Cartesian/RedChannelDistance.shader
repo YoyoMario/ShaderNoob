@@ -127,7 +127,7 @@ fixed4 frag(v2f i) : SV_Target
     
     //return calculatedFadeColor;
     
-    //return stepResult;
+    return stepResult;
     col *= stepResult;
     return float4(col.rgba);
 
