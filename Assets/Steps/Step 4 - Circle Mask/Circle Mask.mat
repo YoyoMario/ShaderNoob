@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DistortedCircle
-  m_Shader: {fileID: 4800000, guid: 075b9feb6c275d64b9223f33f5f22497, type: 3}
+  m_Name: Circle Mask
+  m_Shader: {fileID: 4800000, guid: 76b8aee4154492b46ac43164935f46b5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -78,6 +78,7 @@ Material:
     - _GlossyReflections: 1
     - _LegnthScale: 1
     - _LengthScale: 1
+    - _MaskPower: 3
     - _Metallic: 0
     - _Mode: 0
     - _Nesto: 0.82
