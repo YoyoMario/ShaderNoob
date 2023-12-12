@@ -3,6 +3,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _LineDensity("Line Density", Float) = 1
     }
     SubShader
     {
@@ -33,6 +34,8 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
+            float _LineDensity;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -45,9 +48,12 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             fixed4 frag (v2f i) : SV_Target
             {
                 float yPos = i.screenPosition.y;
-                yPos += _Time.y * 0.1;
-                yPos *= 10;
-                yPos = frac(yPos);
+                // yPos += _Time.y * 0.1;
+                  yPos *= _LineDensity;
+                yPos = (yPos * 2) - 1;
+                // yPos = frac(yPos);
+                yPos = sin(yPos);
+                yPos = (yPos + 1) / 2;
                 // fixed4 col = tex2D(_MainTex, i.uv);
                 return yPos;
             }
