@@ -45,17 +45,25 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
                 return o;
             }
 
+            float Vertical_Lines(float2 screenPosition, float lineDensity)
+            {
+                float value = screenPosition.y * lineDensity;
+                value = (value * 2) - 1; // Convert to -1 to 1 value for sin() to work.
+                value = sin(value);
+                value = (value+1)/2; // Convert to 0 to 1 after sin() did the job.
+                return value;
+            }
+            void Unity_FresnelEffect_float(float3 Normal, float3 ViewDir, float Power, out float Out)
+            {
+                Out = pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
-                float yPos = i.screenPosition.y;
-                // yPos += _Time.y * 0.1;
-                  yPos *= _LineDensity;
-                yPos = (yPos * 2) - 1;
-                // yPos = frac(yPos);
-                yPos = sin(yPos);
-                yPos = (yPos + 1) / 2;
+                float3 x = float3(1,1,1) *  _WorldSpaceCameraPos;
+                return float4(_WorldSpaceCameraPos,1);
                 // fixed4 col = tex2D(_MainTex, i.uv);
-                return yPos;
+                return Vertical_Lines(i.screenPosition, _LineDensity);
             }
             ENDCG
         }
