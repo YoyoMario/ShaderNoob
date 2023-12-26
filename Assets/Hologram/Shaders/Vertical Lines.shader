@@ -2,7 +2,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _HolographicTexture ("Holographic Texture", 2D) = "white" {}
         [Space]
         _LineSpeed ("Line Speed", Float) = 0.25
         _LineDensity("Line Density", Float) = 1
@@ -46,8 +46,8 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
                 float3 objectCenter : TEXCOORD3;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            sampler2D _HolographicTexture;
+            float4 _HolographicTexture_ST;
 
             half _LineSpeed;
             float _LineDensity;
@@ -64,7 +64,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv = TRANSFORM_TEX(v.uv, _HolographicTexture);
                 o.screenPosition = o.vertex; //ComputeScreenPos(o.vertex);
                 o.objectCenter = mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
 
@@ -113,7 +113,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
                 float4 fresnelResult = _FresnelColor * i.fresnel;
                 //return fresnelResult;
 
-                float verticalLine = Generate_Line(_MainTex, i.uv, i.screenPosition, _LineDensity / distanceToCamera);
+                float verticalLine = Generate_Line(_HolographicTexture, i.uv, i.screenPosition, _LineDensity / distanceToCamera);
                 // return verticalLine;
                 float4 coloredVerticalLine = verticalLine * _FresnelColor;
                 // return coloredVerticalLine;
