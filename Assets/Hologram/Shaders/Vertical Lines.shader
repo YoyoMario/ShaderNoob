@@ -71,10 +71,14 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             v2f vert (appdata v)
             {
                 v2f o;
+                
+                float displacement = tex2Dlod(_HolographicTexture, v.vertex);
+                displacement = 2 * displacement - 1; 
+
                 float2 originalUV = v.uv;
-                // originalUV.y += _Time.y* 0.5;
                 float4 originalVertex = v.vertex;
-                originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _VertexDisplacementY)) * _VertexDistortAmount;
+                originalVertex.x += displacement * _VertexDistortAmount;
+                // originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _VertexDisplacementY)) * _VertexDistortAmount;
 
                 o.uv = TRANSFORM_TEX(v.uv, _HolographicTexture);
                 o.vertex = UnityObjectToClipPos(originalVertex);

@@ -89,7 +89,7 @@ Material:
     - _Testis: 0.012
     - _UVSec: 0
     - _VertexDisplacementY: 50
-    - _VertexDistortAmount: 0.02
+    - _VertexDistortAmount: -0.05
     - _VertexDistortSpeed: 10
     - _ZWrite: 1
     m_Colors:
