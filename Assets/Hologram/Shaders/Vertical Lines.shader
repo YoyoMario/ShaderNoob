@@ -97,8 +97,8 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             {
             #if _LINEDESIGN_TEXTURE
                 float2 holographicUVs = originalUV;
+                holographicUVs.y *= lineDensity;
                 holographicUVs.y += _Time.y * _LineSpeed;
-                holographicUVs.y *= _LineDensity;
                 return tex2D(holographicTexture, holographicUVs);
             #elif _LINEDESIGN_MATH
                 return Vertical_Lines(screenPosition, lineDensity);
