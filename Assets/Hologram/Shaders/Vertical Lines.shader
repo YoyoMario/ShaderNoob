@@ -10,6 +10,10 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
         [HDR] _FresnelColor ("Fresnel Color", Color) = (1,1,1,1)
         _FresnelPower("Fresnel Power", Float) = 1
         [Space(50)]
+        _VertexDistortAmount ("Vertex Distort Amont", Float) = 1
+        _VertexDistortSpeed ("Vertex Distort Speed", Float) = 1
+        _VertexDisplacementY ("Vertex Displacement Y", Float) = 1
+        [Space(50)]
         [KeywordEnum(Texture, Math)]
         _LineDesign("Line Design", Float) = 0
     }
@@ -55,6 +59,10 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             float4 _FresnelColor;
             float _FresnelPower;
 
+            float _VertexDistortAmount;
+            float _VertexDistortSpeed;
+            float _VertexDisplacementY;
+
             float Unity_FresnelEffect(float3 Normal, float3 ViewDir, float Power)
             {
                 return pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
@@ -63,9 +71,14 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             v2f vert (appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                float2 originalUV = v.uv;
+                // originalUV.y += _Time.y* 0.5;
+                float4 originalVertex = v.vertex;
+                originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _VertexDisplacementY)) * _VertexDistortAmount;
+
                 o.uv = TRANSFORM_TEX(v.uv, _HolographicTexture);
-                o.screenPosition = o.vertex; //ComputeScreenPos(o.vertex);
+                o.vertex = UnityObjectToClipPos(originalVertex);
+                o.screenPosition = o.vertex;
                 o.objectCenter = mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
 
                 float4 worldVertexPosition = mul(unity_ObjectToWorld, v.vertex);

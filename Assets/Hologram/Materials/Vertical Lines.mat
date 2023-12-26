@@ -72,13 +72,13 @@ Material:
     - _DetailNormalMapScale: 1
     - _DistanceFromCamera: 0
     - _DstBlend: 0
-    - _FresnelPower: 1.34
+    - _FresnelPower: 1.83
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LineDensity: 50
+    - _LineDensity: 69.5
     - _LineDesign: 0
-    - _LineSpeed: 2
+    - _LineSpeed: 2.13
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -86,7 +86,11 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Testis: 0.012
     - _UVSec: 0
+    - _VertexDisplacementY: 50
+    - _VertexDistortAmount: 0.02
+    - _VertexDistortSpeed: 10
     - _ZWrite: 1
     m_Colors:
     - FresnelColor: {r: 0, g: 205301.88, b: 771593.6, a: 1}
