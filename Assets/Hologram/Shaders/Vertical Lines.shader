@@ -12,7 +12,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
         [Space(50)]
         _VertexDistortAmount ("Vertex Distort Amont", Float) = 1
         _VertexDistortSpeed ("Vertex Distort Speed", Float) = 1
-        _VertexDisplacementY ("Vertex Displacement Y", Float) = 1
+        _AmountOfWobbles ("Vertex Amount Of Wobbles", Float) = 20
         [Space(50)]
         [KeywordEnum(Texture, Math)]
         _LineDesign("Line Design", Float) = 0
@@ -48,6 +48,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
                 float4 screenPosition : TEXCOORD1;
                 float fresnel : TEXCOORD2;
                 float3 objectCenter : TEXCOORD3;
+                float2 uvScreenPosition : TEXCOORD4;
             };
 
             sampler2D _HolographicTexture;
@@ -61,7 +62,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
 
             float _VertexDistortAmount;
             float _VertexDistortSpeed;
-            float _VertexDisplacementY;
+            float _AmountOfWobbles;
 
             float Unity_FresnelEffect(float3 Normal, float3 ViewDir, float Power)
             {
@@ -72,18 +73,19 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             {
                 v2f o;
                 
-                float displacement = tex2Dlod(_HolographicTexture, v.vertex);
-                displacement = 2 * displacement - 1; 
+                // float displacement = tex2Dlod(_HolographicTexture, v.vertex);
+                // displacement = 2 * displacement - 1; 
 
-                float2 originalUV = v.uv;
-                float4 originalVertex = v.vertex;
-                originalVertex.x += displacement * _VertexDistortAmount;
-                // originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _VertexDisplacementY)) * _VertexDistortAmount;
+                // float2 originalUV = v.uv;
+                // float4 originalVertex = v.vertex;
+                // // originalVertex.x += displacement * _VertexDistortAmount;
+                // originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _AmountOfWobbles)) * _VertexDistortAmount;
 
                 o.uv = TRANSFORM_TEX(v.uv, _HolographicTexture);
-                o.vertex = UnityObjectToClipPos(originalVertex);
+                o.vertex = UnityObjectToClipPos(v.vertex);
                 o.screenPosition = o.vertex;
                 o.objectCenter = mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
+                o.uvScreenPosition = o.vertex;
 
                 float4 worldVertexPosition = mul(unity_ObjectToWorld, v.vertex);
                 float3 worldNormalPosition = mul(unity_ObjectToWorld, v.normal);
@@ -130,7 +132,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
                 float4 fresnelResult = _FresnelColor * i.fresnel;
                 //return fresnelResult;
 
-                float verticalLine = Generate_Line(_HolographicTexture, i.uv, i.screenPosition, _LineDensity / distanceToCamera);
+                float verticalLine = Generate_Line(_HolographicTexture, i.uvScreenPosition, i.screenPosition, _LineDensity / distanceToCamera);
                 // return verticalLine;
                 float4 coloredVerticalLine = verticalLine * _FresnelColor;
                 // return coloredVerticalLine;
