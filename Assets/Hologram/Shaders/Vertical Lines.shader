@@ -7,9 +7,19 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
         _LineSpeed ("Line Speed", Float) = 0.25
         _LineDensity("Line Density", Float) = 1
         [Space]
+        _ScanlineDistortionTexture ("Scanline Distortion Texture", 2D) = "white" {}
+        _ScanlineDistortionScale ("Scaline Distortion Scale", Float) = 5
+        _ScanlineDistortionAmount ("Scanline Distortion Amount", Float) = 5
+        _ScanlineHeight ("Scanline Height", Float) = 1
+        _ScanlineSmoothStep ("Scaline Smoothstep", Vector) = (1,1,1,1)
+        _ScanlineColor("Scanline Color", Color) = (1,0,0,1)
+        _ScanlineSpeed("Scanline Speed", Float) = 1
+        [Space]
         [HDR] _FresnelColor ("Fresnel Color", Color) = (1,1,1,1)
         _FresnelPower("Fresnel Power", Float) = 1
         [Space(50)]
+        _DistortionTexture ("Distortion Texture", 2D) = "white" {}
+        _DistortionTextureDetailLevel ("Distortion Texture Detail Level", Float) = 5
         _VertexDistortAmount ("Vertex Distort Amont", Float) = 1
         _VertexDistortSpeed ("Vertex Distort Speed", Float) = 1
         _AmountOfWobbles ("Vertex Amount Of Wobbles", Float) = 20
@@ -24,6 +34,8 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
 
         Blend SrcAlpha OneMinusSrcAlpha
 
+// Enables writing to the depth buffer for this Pass
+            ZWrite On
         Pass
         {
             CGPROGRAM
@@ -57,9 +69,21 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             half _LineSpeed;
             float _LineDensity;
 
+            sampler2D _ScanlineDistortionTexture;
+            float4 _ScanlineDistortionTexture_ST;
+            float _ScanlineDistortionScale;
+            float _ScanlineDistortionAmount;
+            float _ScanlineHeight;
+            float2 _ScanlineSmoothStep;
+            float4 _ScanlineColor;
+            float _ScanlineSpeed;
+
             float4 _FresnelColor;
             float _FresnelPower;
 
+            sampler2D _DistortionTexture;
+            float4 _DistortionTexture_ST;
+            float _DistortionTextureDetailLevel;
             float _VertexDistortAmount;
             float _VertexDistortSpeed;
             float _AmountOfWobbles;
@@ -73,16 +97,21 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
             {
                 v2f o;
                 
-                // float displacement = tex2Dlod(_HolographicTexture, v.vertex);
+                // float4 displacementVertex = v.vertex;
+                // displacementVertex.y += cos(_Time.y * _VertexDistortSpeed);
+                // displacementVertex.x += sin(_Time.y * _VertexDistortSpeed); 
+                // float displacement = tex2Dlod(_DistortionTexture, displacementVertex / _DistortionTextureDetailLevel);
                 // displacement = 2 * displacement - 1; 
 
-                // float2 originalUV = v.uv;
+                // // float2 originalUV = v.uv;
                 // float4 originalVertex = v.vertex;
-                // // originalVertex.x += displacement * _VertexDistortAmount;
-                // originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _AmountOfWobbles)) * _VertexDistortAmount;
+                // originalVertex.x += displacement * _VertexDistortAmount;
+                // // originalVertex.x += sin((_Time.y * _VertexDistortSpeed) + (originalVertex.y * _AmountOfWobbles)) * _VertexDistortAmount;
+                //  v.vertex = originalVertex;
 
                 o.uv = TRANSFORM_TEX(v.uv, _HolographicTexture);
                 o.vertex = UnityObjectToClipPos(v.vertex);
+
                 o.screenPosition = o.vertex;
                 o.objectCenter = mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
                 o.uvScreenPosition = o.vertex;
@@ -107,6 +136,16 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
                 return value;
             }
 
+            float Scan_Line(float2 screenPosition, float lineHeight)
+            {
+                float screenPositionY = screenPosition.y;
+                screenPositionY += _Time.y * _ScanlineSpeed;
+                float value = screenPositionY * lineHeight;
+                value = frac(value);
+                value = smoothstep(_ScanlineSmoothStep.x, _ScanlineSmoothStep.y, value);
+                return (value);
+            }
+
             float4 Unity_Remap(float4 In, float2 InMinMax, float2 OutMinMax)
             {
                 return OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
@@ -126,11 +165,24 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                float2 scanlineUV = i.uvScreenPosition / _ScanlineDistortionScale;
+                scanlineUV -= _Time.x;
+                float scanlineDistortion = tex2D(_ScanlineDistortionTexture, scanlineUV);
+                // return scanlineDistortion;                
+                scanlineDistortion = (scanlineDistortion * 2) - 1; // Convert to -1 to 1 value for sin() to work.
+                float2 scanlineVertex = i.vertex;
+                scanlineVertex.y += scanlineDistortion * _ScanlineDistortionAmount;
+                float scanLine = Scan_Line(scanlineVertex, _ScanlineHeight);
+                //  return scanLine;
+                float4 coloredScanLine = pow(scanLine * _ScanlineColor, 1);
+                // return coloredScanLine;
+
                 float3 directionFromCamera = _WorldSpaceCameraPos - i.objectCenter;
                 float distanceToCamera = length(directionFromCamera);
 
                 float4 fresnelResult = _FresnelColor * i.fresnel;
-                //return fresnelResult;
+                fresnelResult = saturate(fresnelResult);
+                //  return fresnelResult;
 
                 float verticalLine = Generate_Line(_HolographicTexture, i.uvScreenPosition, i.screenPosition, _LineDensity / distanceToCamera);
                 // return verticalLine;
@@ -139,6 +191,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
 
                 float4 finalColor = fresnelResult + coloredVerticalLine;
                 finalColor = Unity_Remap(finalColor, float2(0,2), float2(0,1));
+                 finalColor += coloredScanLine;
                 return finalColor; 
             }
             ENDCG
