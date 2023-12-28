@@ -82,7 +82,7 @@ Material:
     - _DistanceFromCamera: 0
     - _DistortionTextureDetailLevel: 0.83
     - _DstBlend: 0
-    - _FresnelPower: 3.3
+    - _FresnelPower: 2.15
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -112,6 +112,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 0, g: 2.0737062, b: 3.482202, a: 1}
     - _LineColor: {r: 0, g: 2.0737062, b: 3.482202, a: 1}
-    - _ScanlineColor: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 0.15686275}
+    - _ScanlineColor: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 0.19215687}
     - _ScanlineSmoothStep: {r: 0.4, g: -0.7, b: 1, a: 1}
   m_BuildTextureStacks: []

@@ -95,7 +95,7 @@ Material:
     - _Parallax: 0.02
     - _ScanlineDistortionAmount: 5
     - _ScanlineDistortionScale: 5
-    - _ScanlineHeight: -0.02
+    - _ScanlineHeight: -0.011
     - _ScanlineSpeed: 50
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

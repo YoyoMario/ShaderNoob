@@ -27,17 +27,57 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
         [KeywordEnum(Texture, Math)]
         _LineDesign("Line Design", Float) = 0
     }
+    
     SubShader
     {
-        Tags { "Queue" = "Transparent" }
+        Tags 
+        {
+            "Queue" = "Transparent"                
+        }
         LOD 100
-
-        Blend SrcAlpha OneMinusSrcAlpha
-
-// Enables writing to the depth buffer for this Pass
-            ZWrite On
         Pass
         {
+            Name "Main Holographic Pre-Pass"
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+            };
+
+            // Output structure for the vertex shader
+            struct v2f
+            {
+                float4 pos : POSITION; // Output position in clip space
+            };
+
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
+
+            fixed4 frag(v2f i) : COLOR
+            {
+                // Output the depth value
+                return i.pos.z;
+            }
+            ENDCG
+        }
+
+        Pass
+        {
+            
+            Name "Main Holographic Pass"
+            Blend SrcAlpha OneMinusSrcAlpha
+
+            // Enables writing to the depth buffer for this Pass
+            ZWrite On
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
