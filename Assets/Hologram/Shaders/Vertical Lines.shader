@@ -38,7 +38,7 @@ Shader "YoyoMario/Unlit/Hologram/Vertical Lines"
         Pass
         {
             Name "Main Holographic Pre-Pass"
-
+            Tags { "LightMode" = "DepthOnly" }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
