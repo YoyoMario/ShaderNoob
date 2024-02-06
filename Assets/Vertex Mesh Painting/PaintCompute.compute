@@ -14,9 +14,10 @@ void CSMain(uint id : SV_DispatchThreadID)
         return;
     }
 
-    // float3 pos = mul(_LocalToWorld, float4(_VertexBuffer[id], 1.0)).xyz;
-    // float mask = 1.0 - saturate(distance(pos, _Sphere.xyz) / _Sphere.w);
+    float3 pos = mul(_LocalToWorld, float4(_VertexBuffer[id], 1.0)).xyz;
+    float mask = 1.0 - saturate(distance(pos, _Sphere.xyz) / _Sphere.w);
     
-    // _ColorBuffer[id] += float4(mask, 0, 0, 1);
+    _ColorBuffer[id] += float4(mask, 0, 0, 1);
+    _ColorBuffer[id] = saturate(_ColorBuffer[id]);
 
 }
